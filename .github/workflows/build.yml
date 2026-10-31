@@ -1,3 +1,4 @@
+
 name: Build vcam .deb
 
 on:
@@ -10,6 +11,7 @@ jobs:
     runs-on: macos-latest
     env:
       THEOS: ${{ github.workspace }}/theos
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,9 +19,7 @@ jobs:
       - name: Install Theos
         run: |
           git clone --recursive --depth 1 https://github.com/theos/theos.git "$THEOS"
-          # 安装 ldid（用于签名），优先用 theos 官方 Homebrew tap
-          brew install theos/ldid/ldid || brew install ldid
-          which ldid || curl -fsSL https://raw.githubusercontent.com/theos/ldid/master/install.sh | sudo sh
+          brew install ldid
           which ldid
 
       - name: Install dpkg-deb
@@ -38,7 +38,7 @@ jobs:
       - name: Build package
         run: |
           make clean package FINALPACKAGE=1
-          ls -la packages/
+          ls -lh packages/
 
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
